@@ -1,1 +1,5 @@
+# macOS trash:
 .DS_Store
+
+# virtual env:
+venv/*
