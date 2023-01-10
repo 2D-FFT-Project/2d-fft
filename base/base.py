@@ -128,4 +128,4 @@ def configure_logging(logging_level=None,
     return handlers
 
 def prepare_logger(level=logging.DEBUG):
-    logging.basicConfig(format='%(levelname)-8s  %(message)s', level=level)
+    logging.basicConfig(format='[%(levelname)-4s]  %(message)s', level=level)
