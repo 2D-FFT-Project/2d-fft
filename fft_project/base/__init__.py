@@ -5,32 +5,6 @@ import logging
 import inspect
 
 
-def run_sub(args, env=None, cwd=None, show_logs=True):
-    """Running subprocess with real-time logs
-
-    """
-    p = subprocess.Popen(args,
-                         env=env,
-                         cwd=cwd,
-                         stdout=subprocess.PIPE,
-                         universal_newlines=True,
-                         encoding='utf-8')
-    output = ''
-   
-    sys.stdout.flush()
-    for stdout_line in iter(p.stdout.readline, ""):
-        output += stdout_line
-        if show_logs:
-            sys.stdout.write(stdout_line)
-            sys.stdout.flush()
-    out = p.stdout
-    p.stdout.close()
-    return_code = p.wait()
-    if return_code:
-        raise subprocess.CalledProcessError(return_code, args)
-    return output
-
-
 _log = logging.getLogger(__name__)
 
 
@@ -127,5 +101,5 @@ def configure_logging(logging_level=None,
 
     return handlers
 
-def prepare_logger(level=logging.DEBUG):
+def prepare_logger(level=logging.INFO):
     logging.basicConfig(format='[%(levelname)-4s]  %(message)s', level=level)
