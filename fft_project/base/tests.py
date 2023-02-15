@@ -1,4 +1,4 @@
-from base import *
+from fft_project.base import *
 
 class BaseTest:    
     def subprocessTests():

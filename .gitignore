@@ -1,5 +1,8 @@
 # macOS trash:
 .DS_Store
 
+__pycache__
+
 # Virtual env:
-venv/*
+venv
+fft_project.egg-info

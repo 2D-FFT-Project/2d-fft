@@ -21,7 +21,7 @@ jobs:
 
       - name: Checking sync script
         run: |
-          source dev_utils/sync.sh
+          source dev-utils/sync.sh
           which python3
           if [[ "$(which python3)" == *"venv/bin/python3"* ]]; then
             echo "Running in venv"
