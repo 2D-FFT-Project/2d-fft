@@ -1,20 +1,24 @@
-from fft_project.base import *
+import os
+import logging
+import inspect
 
-class BaseTest:    
-    def subprocessTests():
-        logging.debug(f'{inspect.currentframe().f_code.co_name}')
+from fft_project import base
+
+class base_tests:    
+    def subprocessTest():
+        logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
         cur_dir = os.path.dirname(os.path.realpath(__file__))
         test_str = 'abc\ncde'
-        out = run_sub(['echo', test_str], show_logs=False)
-        logging.debug(f'Expected:\t {test_str}')
-        logging.debug(f'Got:\t {out[0:-1]}')
+        out = base.run_sub(['echo', test_str], show_logs=True)
+        logging.debug(f'Expected:\n{test_str}')
+        logging.debug(f'Got:\n{out[0:-1]}')
         assert(out[0:-1] == test_str)
 
 
 def main():
-    BaseTest.subprocessTests()
+    base_tests.subprocessTest()
 
 
 if __name__ == '__main__':
-    prepare_logger()
+    base.prepare_logger(level=logging.DEBUG)
     main()
