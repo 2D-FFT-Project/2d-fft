@@ -1,5 +1,6 @@
-from fft_project.base import *
 import numpy as np
 
-def multimply_matricies(matr_a, matr_b):
+from fft_project import base
+
+def multimply_matricies(matr_a: np.array, matr_b: np.array):
   return matr_a * matr_b
