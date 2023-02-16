@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASEDIR=$(dirname $0)
+FFT_PROJECT_DIR=$PWD
 
 #Creating enviroment
 python3 -m venv venv
@@ -12,3 +12,8 @@ source ./venv/bin/activate
 # Syncing python packages
 pip3 install -r dev-utils/requirements.txt
 python3 -m pip install -e .
+
+# Project functions
+fft_build() {
+ python3 -m pip install -e $FFT_PROJECT_DIR
+}

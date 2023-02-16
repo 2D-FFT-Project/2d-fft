@@ -7,7 +7,6 @@ from fft_project import base
 class base_tests:    
     def subprocessTest():
         logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
-        cur_dir = os.path.dirname(os.path.realpath(__file__))
         test_str = 'abc\ncde'
         out = base.run_sub(['echo', test_str], show_logs=True)
         logging.debug(f'Expected:\n{test_str}')
