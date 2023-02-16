@@ -3,6 +3,14 @@
 
 __pycache__
 
+# Cython Trash
+*.so
+*.html
+
+
+
 # Virtual env:
-venv
-fft_project.egg-info
+/venv
+/fft_project.egg-info
+
+/build
