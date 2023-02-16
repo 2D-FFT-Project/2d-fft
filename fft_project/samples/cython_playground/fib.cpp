@@ -1214,8 +1214,8 @@ static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
 /* Late includes */
 
-/* "fft_project/samples/cython_playground/fib.pyx":5
- * import cython
+/* "fft_project/samples/cython_playground/fib.pyx":6
+ * 
  * 
  * cpdef fib(n):             # <<<<<<<<<<<<<<
  *     """
@@ -1237,7 +1237,7 @@ static PyObject *__pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(PyO
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("fib", 0);
 
-  /* "fft_project/samples/cython_playground/fib.pyx":10
+  /* "fft_project/samples/cython_playground/fib.pyx":11
  * 
  *     """
  *     a, b = 0, 1             # <<<<<<<<<<<<<<
@@ -1253,7 +1253,7 @@ static PyObject *__pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(PyO
   __pyx_v_b = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "fft_project/samples/cython_playground/fib.pyx":11
+  /* "fft_project/samples/cython_playground/fib.pyx":12
  *     """
  *     a, b = 0, 1
  *     while b < n:             # <<<<<<<<<<<<<<
@@ -1261,39 +1261,39 @@ static PyObject *__pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(PyO
  *         a, b = b, a + b
  */
   while (1) {
-    __pyx_t_2 = PyObject_RichCompare(__pyx_v_b, __pyx_v_n, Py_LT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 11, __pyx_L1_error)
-    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 11, __pyx_L1_error)
+    __pyx_t_2 = PyObject_RichCompare(__pyx_v_b, __pyx_v_n, Py_LT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 12, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 12, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     if (!__pyx_t_3) break;
 
-    /* "fft_project/samples/cython_playground/fib.pyx":12
+    /* "fft_project/samples/cython_playground/fib.pyx":13
  *     a, b = 0, 1
  *     while b < n:
  *         print(b, end=' ')             # <<<<<<<<<<<<<<
  *         a, b = b, a + b
  */
-    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 12, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 13, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_b);
-    __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_end, __pyx_kp_u_) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 12, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_end, __pyx_kp_u_) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 13, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "fft_project/samples/cython_playground/fib.pyx":13
+    /* "fft_project/samples/cython_playground/fib.pyx":14
  *     while b < n:
  *         print(b, end=' ')
  *         a, b = b, a + b             # <<<<<<<<<<<<<<
  */
     __pyx_t_4 = __pyx_v_b;
     __Pyx_INCREF(__pyx_t_4);
-    __pyx_t_1 = PyNumber_Add(__pyx_v_a, __pyx_v_b); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
+    __pyx_t_1 = PyNumber_Add(__pyx_v_a, __pyx_v_b); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 14, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF_SET(__pyx_v_a, __pyx_t_4);
     __pyx_t_4 = 0;
@@ -1301,8 +1301,8 @@ static PyObject *__pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(PyO
     __pyx_t_1 = 0;
   }
 
-  /* "fft_project/samples/cython_playground/fib.pyx":5
- * import cython
+  /* "fft_project/samples/cython_playground/fib.pyx":6
+ * 
  * 
  * cpdef fib(n):             # <<<<<<<<<<<<<<
  *     """
@@ -1349,7 +1349,7 @@ static PyObject *__pyx_pf_11fft_project_7samples_17cython_playground_3fib_fib(CY
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("fib", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(__pyx_v_n, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(__pyx_v_n, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1423,7 +1423,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 13, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
