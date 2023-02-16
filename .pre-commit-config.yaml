@@ -4,6 +4,10 @@ repos:
     hooks:
     -   id: no-commit-to-branch
         name: Branch protection
+        args: [
+            --branch, master,
+            --branch, main
+        ]
     -   id: end-of-file-fixer
         name: EOF Check
     -   id: trailing-whitespace
