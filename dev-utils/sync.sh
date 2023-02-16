@@ -11,6 +11,8 @@ source ./venv/bin/activate
 
 # Syncing python packages
 pip3 install -r dev-utils/requirements.txt
+pre-commit install
+
 python3 -m pip install -e .
 
 # Project functions

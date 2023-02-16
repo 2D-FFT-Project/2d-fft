@@ -1218,8 +1218,8 @@ static PyObject *__pyx_int_1;
  * import cython
  * 
  * cpdef fib(n):             # <<<<<<<<<<<<<<
- *   """
- *   Print the Fibonacci series up to n.
+ *     """
+ *     Print the Fibonacci series up to n.
  */
 
 static PyObject *__pyx_pw_11fft_project_7samples_17cython_playground_3fib_1fib(PyObject *__pyx_self, PyObject *__pyx_v_n); /*proto*/
@@ -1239,10 +1239,10 @@ static PyObject *__pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(PyO
 
   /* "fft_project/samples/cython_playground/fib.pyx":10
  * 
- *   """
- *   a, b = 0, 1             # <<<<<<<<<<<<<<
- *   while b < n:
- *     print(b, end=' ')
+ *     """
+ *     a, b = 0, 1             # <<<<<<<<<<<<<<
+ *     while b < n:
+ *         print(b, end=' ')
  */
   __pyx_t_1 = __pyx_int_0;
   __Pyx_INCREF(__pyx_t_1);
@@ -1254,11 +1254,11 @@ static PyObject *__pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(PyO
   __pyx_t_2 = 0;
 
   /* "fft_project/samples/cython_playground/fib.pyx":11
- *   """
- *   a, b = 0, 1
- *   while b < n:             # <<<<<<<<<<<<<<
- *     print(b, end=' ')
- *     a, b = b, a + b
+ *     """
+ *     a, b = 0, 1
+ *     while b < n:             # <<<<<<<<<<<<<<
+ *         print(b, end=' ')
+ *         a, b = b, a + b
  */
   while (1) {
     __pyx_t_2 = PyObject_RichCompare(__pyx_v_b, __pyx_v_n, Py_LT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 11, __pyx_L1_error)
@@ -1267,10 +1267,10 @@ static PyObject *__pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(PyO
     if (!__pyx_t_3) break;
 
     /* "fft_project/samples/cython_playground/fib.pyx":12
- *   a, b = 0, 1
- *   while b < n:
- *     print(b, end=' ')             # <<<<<<<<<<<<<<
- *     a, b = b, a + b
+ *     a, b = 0, 1
+ *     while b < n:
+ *         print(b, end=' ')             # <<<<<<<<<<<<<<
+ *         a, b = b, a + b
  */
     __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 12, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
@@ -1287,9 +1287,9 @@ static PyObject *__pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(PyO
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
     /* "fft_project/samples/cython_playground/fib.pyx":13
- *   while b < n:
- *     print(b, end=' ')
- *     a, b = b, a + b             # <<<<<<<<<<<<<<
+ *     while b < n:
+ *         print(b, end=' ')
+ *         a, b = b, a + b             # <<<<<<<<<<<<<<
  */
     __pyx_t_4 = __pyx_v_b;
     __Pyx_INCREF(__pyx_t_4);
@@ -1305,8 +1305,8 @@ static PyObject *__pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(PyO
  * import cython
  * 
  * cpdef fib(n):             # <<<<<<<<<<<<<<
- *   """
- *   Print the Fibonacci series up to n.
+ *     """
+ *     Print the Fibonacci series up to n.
  */
 
   /* function exit code */
@@ -1328,7 +1328,7 @@ static PyObject *__pyx_f_11fft_project_7samples_17cython_playground_3fib_fib(PyO
 
 /* Python wrapper */
 static PyObject *__pyx_pw_11fft_project_7samples_17cython_playground_3fib_1fib(PyObject *__pyx_self, PyObject *__pyx_v_n); /*proto*/
-static char __pyx_doc_11fft_project_7samples_17cython_playground_3fib_fib[] = "\n  Print the Fibonacci series up to n.\n  \n  ";
+static char __pyx_doc_11fft_project_7samples_17cython_playground_3fib_fib[] = "\n    Print the Fibonacci series up to n.\n\n    ";
 static PyObject *__pyx_pw_11fft_project_7samples_17cython_playground_3fib_1fib(PyObject *__pyx_self, PyObject *__pyx_v_n) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations

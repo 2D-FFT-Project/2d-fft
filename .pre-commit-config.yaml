@@ -1,0 +1,42 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: no-commit-to-branch
+        name: Branch protection
+    -   id: end-of-file-fixer
+        name: EOF Check
+    -   id: trailing-whitespace
+        name: Fix trailing whitespaces
+        types: [file]
+        files: \.(py|pyx)$
+    -   id: double-quote-string-fixer
+        name: Force single quotes
+        types: [file]
+        files: \.(py|pyx)$
+-   repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+    -   id: black
+        name: Black Style Check
+        args: [
+          --skip-string-normalization,
+          --line-length=80
+        ]
+-   repo: local
+    hooks:
+    -   id: cython-fixes
+        name: Fixing cython files
+        entry: autopep8
+        language: system
+        args: [
+          "--select=E1,E2,E3",
+          "--in-place"
+        ]
+        types: [file]
+        files: \.(pyx)$
+-   repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: [ --force-single-line-imports ]

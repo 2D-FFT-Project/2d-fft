@@ -1,11 +1,11 @@
+# isort: skip_file
 import os
 
 from setuptools import setup, find_packages
 from Cython.Build import cythonize
 
-ignore_dirs = [
-    './venv'
-]
+ignore_dirs = ['./venv']
+
 
 def find_pyx(path='.'):
     cython_files = []
@@ -23,8 +23,8 @@ def find_pyx(path='.'):
 
 
 setup(
-    name = 'fft_project',
-    packages = find_packages(),
-    ext_modules = cythonize(find_pyx(), language_level=3, annotate=True),
-    zip_safe=False
+    name='fft_project',
+    packages=find_packages(),
+    ext_modules=cythonize(find_pyx(), language_level=3, annotate=True),
+    zip_safe=False,
 )
