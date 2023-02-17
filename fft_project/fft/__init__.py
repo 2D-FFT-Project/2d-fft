@@ -1,2 +1,2 @@
 from . import slow
-from .fft_cpp_impl import FFT
+from .c_wrappers import FFT
