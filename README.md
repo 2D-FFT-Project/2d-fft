@@ -20,3 +20,6 @@ Run hooks:
 ```shell
 ❯ pre-commit run --all-files
 ```
+
+## Useful docs
+[Wrapping C++ in Cython](https://cython.readthedocs.io/en/latest/src/userguide/wrapping_CPlusPlus.html)
