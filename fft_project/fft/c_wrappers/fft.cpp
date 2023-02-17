@@ -69,8 +69,4 @@ namespace fft {
     }
     return p;
   }
-
-  void fft_impl::smth() {
-    cout << "HEllo World smth" << '\n';
-  }
 }

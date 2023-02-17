@@ -19,12 +19,6 @@ class fft_tests:
         assert np.array_equal(result2, np.array([3, 8, 14, 8, 3]))
         logging.debug('Test succeed!\n')
 
-    def fft_c_impl_dummy_test():
-        logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
-        fft_inst = fft.FFT()
-        fft_inst.smth()
-        logging.debug('Test succeed!\n')
-
     def fft_cpp_impl_test():
         logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
         fft_inst = fft.FFT()
@@ -36,18 +30,34 @@ class fft_tests:
         assert np.array_equal(np.array(result), expected)
         logging.debug('Test succeed!\n')
 
-    def slow_perf_test():
+    def c_impl_perf_test():
         logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
-        expected_time = 9
-        array_a = np.random.randint(100, size=5000)
-        array_b = np.random.randint(100, size=5000)
+        array_size = 5000
+        array_a = np.random.randint(100, size=array_size)
+        array_b = np.random.randint(100, size=array_size)
         logging.debug('Running...')
         start_time = time.time()
-        fft.slow.slow_mult(array_a, array_b)
-        execution_time = time.time() - start_time
-        logging.debug(f'Execution time: {execution_time}s')
-        logging.debug(f'Expected time: {expected_time}s')
-        assert execution_time <= expected_time
+        res1 = fft.slow.slow_mult(array_a, array_b)
+        slow_time = time.time()
+        res2 = fft.FFT().multiply(array_a, array_b)
+        fast_time = time.time()
+        res3 = fft.slow.np_mult(array_a, array_b)
+        numpy_time = time.time()
+        slow, fast, numpy = (
+            slow_time - start_time,
+            fast_time - slow_time,
+            numpy_time - fast_time,
+        )
+        logging.debug(f'Slow: {slow}s')
+        logging.debug(f'Numpy: {numpy}s')
+        logging.debug(f'Fast: {fast}s')
+        assert np.array_equal(res1, res2)
+        assert np.array_equal(res2, res3)
+        logging.debug(f'Equal results check succeed!')
+        assert fast <= slow
+        logging.debug(f'Fast <= Slow check succeed!')
+        assert fast <= numpy
+        logging.debug(f'Fast <= Numpy check succeed!')
         logging.debug('Test succeed!\n')
 
 
@@ -55,5 +65,4 @@ if __name__ == '__main__':
     base.prepare_logger(level=logging.DEBUG)
     fft_tests.slow_test()
     fft_tests.fft_cpp_impl_test()
-    fft_tests.slow_perf_test()
-    fft_tests.fft_c_impl_dummy_test()
+    fft_tests.c_impl_perf_test()

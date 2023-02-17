@@ -15,7 +15,6 @@ namespace fft
   public:
     fft_impl();
     vector<int> multiply(vector<int> a, vector<int> b);
-    void smth();
   };
 }
 
