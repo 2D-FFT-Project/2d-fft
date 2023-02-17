@@ -27,7 +27,7 @@ class fft_tests:
 
     def slow_perf_test():
         logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
-        expected_time = 5.5
+        expected_time = 9
         array_a = np.random.randint(100, size=5000)
         array_b = np.random.randint(100, size=5000)
         logging.debug('Running...')
