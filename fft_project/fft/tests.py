@@ -25,6 +25,17 @@ class fft_tests:
         fft_inst.smth()
         logging.debug('Test succeed!\n')
 
+    def fft_cpp_impl_test():
+        logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
+        fft_inst = fft.FFT()
+        a, b = np.array([1, 2, 3]), np.array([3, 2, 1])
+        result = np.array(fft_inst.multiply(list(a), list(b)))
+        expected = fft.slow.np_mult(a, b)
+        logging.debug(result)
+        logging.debug(expected)
+        assert np.array_equal(np.array(result), expected)
+        logging.debug('Test succeed!\n')
+
     def slow_perf_test():
         logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
         expected_time = 9
@@ -43,5 +54,6 @@ class fft_tests:
 if __name__ == '__main__':
     base.prepare_logger(level=logging.DEBUG)
     fft_tests.slow_test()
+    fft_tests.fft_cpp_impl_test()
     fft_tests.slow_perf_test()
     fft_tests.fft_c_impl_dummy_test()
