@@ -8,6 +8,7 @@ __pycache__
 *.html
 *_wrapper.cpp
 
+/.vscode
 
 # Virtual env:
 /venv
