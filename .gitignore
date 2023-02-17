@@ -6,7 +6,7 @@ __pycache__
 # Cython Trash
 *.so
 *.html
-
+*_wrapper.cpp
 
 
 # Virtual env:
