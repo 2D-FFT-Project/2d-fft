@@ -1,10 +1,9 @@
 import logging
 import os
 
-import base.tests
-import fft.tests
-from base.tests import base_tests
 from fft.tests import fft_tests
+
+from fft_project import base
 
 
 def main():
