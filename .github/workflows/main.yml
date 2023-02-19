@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: Checking sync script
+      - name: Checking sync & build & tests
         run: |
           source dev-utils/sync.sh
           which python3
@@ -29,3 +29,6 @@ jobs:
             echo "::error:: Not running in venv"
             exit 1
           fi
+          echo "Running tests"
+          python3 fft_project/base/tests.py
+          python3 fft_project/fft/tests.py
