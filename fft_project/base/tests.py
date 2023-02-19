@@ -3,9 +3,11 @@ import logging
 import os
 
 from fft_project import base
+from fft_project.base import testing
 
 
 class base_tests:
+    @testing.unit_test
     def subprocessTest():
         logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
         test_str = 'abc\ncde'
@@ -16,7 +18,8 @@ class base_tests:
 
 
 def main():
-    base_tests.subprocessTest()
+    tests_list = [base_tests.subprocessTest]
+    testing.run_tests(tests_list)
 
 
 if __name__ == '__main__':

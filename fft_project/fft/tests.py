@@ -9,18 +9,17 @@ from fft_project import fft
 
 
 class fft_tests:
+    @base.testing.unit_test
     def slow_test():
-        logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
         result = fft.slow.slow_mult(np.array([1, 2, 3]), np.array([3, 2, 1]))
         result2 = fft.slow.np_mult(np.array([1, 2, 3]), np.array([3, 2, 1]))
         logging.debug(result)
         logging.debug(result2)
         assert np.array_equal(result, result2)
         assert np.array_equal(result2, np.array([3, 8, 14, 8, 3]))
-        logging.debug('Test succeed!\n')
 
+    @base.testing.unit_test
     def fft_cpp_impl_test():
-        logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
         fft_inst = fft.FFT()
         a, b = np.array([1, 2, 3]), np.array([3, 2, 1])
         result = np.array(fft_inst.multiply(list(a), list(b)))
@@ -28,10 +27,9 @@ class fft_tests:
         logging.debug(result)
         logging.debug(expected)
         assert np.array_equal(np.array(result), expected)
-        logging.debug('Test succeed!\n')
 
+    @base.testing.unit_test
     def c_impl_perf_test():
-        logging.debug(f'TEST: {inspect.currentframe().f_code.co_name}')
         array_size = 5000
         array_a = np.random.randint(100, size=array_size)
         array_b = np.random.randint(100, size=array_size)
@@ -58,11 +56,13 @@ class fft_tests:
         logging.debug(f'Fast <= Slow check succeed!')
         assert fast <= numpy
         logging.debug(f'Fast <= Numpy check succeed!')
-        logging.debug('Test succeed!\n')
 
 
 if __name__ == '__main__':
     base.prepare_logger(level=logging.DEBUG)
-    fft_tests.slow_test()
-    fft_tests.fft_cpp_impl_test()
-    fft_tests.c_impl_perf_test()
+    tests_list = [
+        fft_tests.slow_test,
+        fft_tests.c_impl_perf_test,
+        fft_tests.fft_cpp_impl_test,
+    ]
+    base.testing.run_tests(tests_list)
