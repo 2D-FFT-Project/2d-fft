@@ -30,5 +30,4 @@ jobs:
             exit 1
           fi
           echo "Running tests"
-          python3 fft_project/base/tests.py
-          python3 fft_project/fft/tests.py
+          python3 fft_project/all_tests.py
