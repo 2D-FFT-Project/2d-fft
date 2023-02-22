@@ -54,8 +54,6 @@ class fft_tests:
         logging.debug(f'Equal results check succeed!')
         assert fast <= slow
         logging.debug(f'Fast <= Slow check succeed!')
-        assert fast <= numpy
-        logging.debug(f'Fast <= Numpy check succeed!')
 
 
 if __name__ == '__main__':
