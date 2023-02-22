@@ -4,12 +4,12 @@ import traceback
 from fft_project.base import tools
 
 
-def unit_test(test_func):
+def test(test):
     def attributed_test():
-        test_name = test_func.__name__
+        test_name = test.__name__
         logging.info(f'TEST: {test_name}')
         try:
-            test_func()
+            test()
             logging.info('SUCCEED!\n')
             return (True, test_name)
         except Exception:
