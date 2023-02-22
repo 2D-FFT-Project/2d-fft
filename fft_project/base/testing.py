@@ -20,13 +20,13 @@ def unit_test(test_func):
     return attributed_test
 
 
-def run_tests(tests):
+def run_tests(tests, ignore: list = []):
     count = len(tests)
     failed = []
     logging.info(f'Executing {count} tests')
     for test in tests:
         (result, test_name) = test()
-        if not result:
+        if not result and test_name not in ignore:
             failed.append(test_name)
     succeed = count - len(failed)
     logging.info(f'{len(failed)} tests failed')
