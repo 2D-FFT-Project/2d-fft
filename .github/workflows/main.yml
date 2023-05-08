@@ -18,6 +18,9 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      # Uses Clang
+      - name: Install Clang
+        uses: egor-tensin/setup-clang@v1.4
 
       - name: Checking sync & build & tests
         run: |
