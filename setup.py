@@ -23,6 +23,7 @@ def find_pyx(path='.'):
     return cython_files
 
 
+# TODO(gyzavyalov): Using Clang/OpenCilkClang: https://stackoverflow.com/a/53186541
 setup(
     name='fft_project',
     packages=find_packages(),
