@@ -7,6 +7,9 @@ from distutils.extension import Extension
 
 ignore_dirs = ['./venv']
 
+os.environ['CC'] = 'clang'
+os.environ['CXX'] = 'clang++'
+
 
 def find_pyx(path='.'):
     cython_files = []
