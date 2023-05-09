@@ -39,6 +39,12 @@ repos:
         ]
         types: [file]
         files: \.(pyx)$
+-   repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: 'acdc65b'
+    hooks:
+    -   id: clang-format
+        types_or: [c++, c, cuda]
+        files: \.(cc|cpp|h|c)$
 -   repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
