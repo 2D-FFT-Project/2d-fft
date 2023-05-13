@@ -1,70 +1,68 @@
 #include "fft.h"
-#include <cmath>
-#include <complex>
+
 #include <iostream>
 
+namespace base {
+using std::string, std::cout;
+std::string getenv(string key, string null_value = "") {
+  char *value = std::getenv(key.c_str());
+  if (value == nullptr) return null_value;
+  return string(value);
+};
+
+template <class T>
+inline void print_matrix(const std::vector<std::vector<T>> &v) {
+  for (int i = 0; i < v.size(); i++) {
+    for (int j = 0; j < v[i].size(); j++)
+      cout << v[i][j] << ' ';
+    cout << '\n';
+  }
+}
+} // namespace base
+
 namespace fft {
-using namespace std;
-typedef complex<double> ftype;
+#define forn(i, n) for (int i = 0; i < (int)(n); i++)
 
-const double pi = acos(-1);
+void fft2d(fft_matrix &v, int N, fft_type root) {
+  if (N == 1) return;
+  const int n = N >> 1;
+  // TODO(gyzavyalov): Remove allocations
+  vector matricies(2, vector(2, fft_matrix(n, vector<fft_type>(n))));
+  forn(i, N) forn(j, N) matricies[i & 1][j & 1][i / 2][j / 2] = v[i][j];
 
-fft_impl::fft_impl() {}
+  fft2d(matricies[0][0], n, root * root);
+  fft2d(matricies[0][1], n, root * root);
+  fft2d(matricies[1][0], n, root * root);
+  fft2d(matricies[1][1], n, root * root);
 
-vector<int> fft_impl::multiply(vector<int> a, vector<int> b) {
-  int len = a.size() + b.size();
-  while (a.size() < len)
-    a.push_back(0);
-  while (b.size() < len)
-    b.push_back(0);
-  vector<ftype> A = fft_impl::evaluate(a);
-  vector<ftype> B = fft_impl::evaluate(b);
-
-  for (int i = 0; i < int(A.size()); i++)
-    A[i] *= B[i];
-  auto x = fft_impl::interpolate(A);
-  while (x.back() == 0)
-    x.pop_back();
-  return x;
-}
-
-vector<ftype> fft_impl::evaluate(vector<int> p) {
-  while (__builtin_popcount(p.size()) != 1)
-    p.push_back(0);
-  vector<ftype> np;
-  for (int x : p)
-    np.push_back(ftype(x, 0));
-  return fft_impl::fft(np, polar(1., 2 * pi / p.size()));
-}
-
-vector<int> fft_impl::interpolate(vector<ftype> p) {
-  int n = p.size();
-  auto inv = fft_impl::fft(p, polar(1., -2 * pi / n));
-  vector<int> res(n);
-  for (int i = 0; i < n; i++)
-    res[i] = round(real(inv[i]) / n);
-  return res;
-}
-
-vector<ftype> fft_impl::fft(vector<ftype> p, ftype wn) {
-  int n = (int)p.size();
-  if (n == 1) return p;
-
-  vector<ftype> a(n / 2), b(n / 2);
-  for (int i = 0; i < n / 2; i++) {
-    a[i] = p[2 * i];
-    b[i] = p[2 * i + 1];
+  fft_type wi = 1;
+  for (int i = 0; i < n; i++, wi *= root) {
+    fft_type wj = 1;
+    for (int j = 0; j < n; j++, wj *= root) {
+      // clang-format off
+      v[i    ][j    ] = matricies[0][0][i][j] + matricies[1][0][i][j] * wi + matricies[0][1][i][j] * wj + matricies[1][1][i][j] * wi * wj;
+      v[i + n][j    ] = matricies[0][0][i][j] - matricies[1][0][i][j] * wi + matricies[0][1][i][j] * wj - matricies[1][1][i][j] * wi * wj;
+      v[i    ][j + n] = matricies[0][0][i][j] + matricies[1][0][i][j] * wi - matricies[0][1][i][j] * wj - matricies[1][1][i][j] * wi * wj;
+      v[i + n][j + n] = matricies[0][0][i][j] - matricies[1][0][i][j] * wi - matricies[0][1][i][j] * wj + matricies[1][1][i][j] * wi * wj;
+      // clang-format on
+    }
   }
-
-  a = fft_impl::fft(a, wn * wn);
-  b = fft_impl::fft(b, wn * wn);
-
-  ftype w = 1;
-  for (int i = 0; i < n / 2; i++) {
-    p[i] = a[i] + w * b[i];
-    p[i + n / 2] = a[i] - w * b[i];
-    w *= wn;
-  }
-  return p;
 }
 } // namespace fft
+
+int main(int argc, char **argv) {
+  using namespace std;
+  const uint32_t N = stoi(string(argv[1]));
+  assert(__builtin_popcount(N) == 1);
+  fft::fft_matrix array2d(N, std::vector<fft::fft_type>(N));
+  {
+    forn(i, N) forn(j, N) array2d[i][j] = i * j;
+    cout << "Base matrix: \n";
+    base::print_matrix(array2d);
+  }
+  {
+    fft::fft2d(array2d, N, std::polar(1., 2 * fft::pi / N));
+    cout << "Result:" << '\n';
+    base::print_matrix(array2d);
+  }
+}

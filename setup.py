@@ -10,25 +10,21 @@ ignore_dirs = ['./venv']
 os.environ['CC'] = 'clang'
 os.environ['CXX'] = 'clang++'
 
+CXX_FLAGS = ['-O3', '-std=c++17', '-Wno-sign-compare', '-DCXX_MEASURE_TIME']
 
-def find_pyx(path='.'):
-    cython_files = []
-    for root, dirs, filenames in os.walk(path):
-        ignore_current = False
-        for dir in ignore_dirs:
-            ignore_current |= root.startswith(dir)
-        if ignore_current:
-            continue
-        for fname in filenames:
-            if fname.endswith('.pyx'):
-                cython_files.append(os.path.join(root, fname))
-    print(f'Cythonizing: {cython_files}')
-    return cython_files
-
+EXTENSIONS = [
+    Extension(
+        name='fft_project.fft.c_wrappers.fft_wrapper',
+        sources=['fft_project/fft/c_wrappers/fft_wrapper.pyx'],
+        language='c++',
+        include_dirs=['fft_project/fft/c_wrappers'],
+        extra_compile_args=CXX_FLAGS,
+    )
+]
 
 setup(
     name='fft_project',
     packages=find_packages(),
-    ext_modules=cythonize(find_pyx(), language_level=3, annotate=True),
+    ext_modules=cythonize(EXTENSIONS, language_level=3, annotate=True),
     zip_safe=False,
 )

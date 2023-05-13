@@ -1,20 +1,16 @@
 #ifndef FFT_H
 #define FFT_H
+#include <complex>
 #include <vector>
 
 namespace fft {
-using namespace std;
-struct fft_impl {
-private:
-  typedef complex<double> ftype;
-  vector<ftype> fft(vector<ftype> p, ftype wn);
-  vector<int> interpolate(vector<ftype> p);
-  vector<ftype> evaluate(vector<int> p);
+using std::vector, std::pair, std::complex;
 
-public:
-  fft_impl();
-  vector<int> multiply(vector<int> a, vector<int> b);
-};
+const double pi = acos(-1);
+typedef complex<double> fft_type;
+typedef vector<vector<fft_type>> fft_matrix;
+
+void fft2d(vector<vector<complex<double>>> &v, int N, complex<double> root);
 } // namespace fft
 
 #endif

@@ -1,0 +1,6 @@
+# Cython Trash
+*.so
+*.html
+*_wrapper.cpp
+
+fft.o

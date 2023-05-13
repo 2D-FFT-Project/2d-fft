@@ -17,5 +17,6 @@ python3 -m pip install -e .
 
 # Project functions
 fft_build() {
- python3 -m pip install -e $FFT_PROJECT_DIR
+  rm -rf $FFT_PROJECT_DIR/build
+  python3 -m pip install -e $FFT_PROJECT_DIR -v
 }

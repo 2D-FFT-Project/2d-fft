@@ -1,16 +1,9 @@
-# distutils: language = c++
-# distutils: extra_compile_args = [ "-std=c++17" ]
-
+from libcpp.complex cimport complex as cpp_complex
 from libcpp.vector cimport vector
 
-from .fft cimport fft_impl
+from . cimport fft
 
 
-cdef class FFT:
-    cdef fft_impl fft
-
-    def __init__(self):
-        self.fft = fft_impl()
-
-    def multiply(self, a: vector[int], b: vector[int]) -> vector[int]:
-        return self.fft.multiply(a, b)
+def fft2d(a: vector[vector[cpp_complex[double]]], n: int, root: cpp_complex[double]) -> vector[vector[cpp_complex[double]]]:
+    fft.fft2d(a, n, root)
+    return a

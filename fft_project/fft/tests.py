@@ -1,3 +1,4 @@
+import cmath
 import logging
 import time
 
@@ -19,13 +20,23 @@ class fft_tests:
 
     @base.testing.test
     def fft_cpp_impl_test():
-        fft_inst = fft.FFT()
-        a, b = np.array([1, 2, 3]), np.array([3, 2, 1])
-        result = np.array(fft_inst.multiply(list(a), list(b)))
-        expected = fft.slow.np_mult(a, b)
+        a = np.array(
+            [
+                [1, 2, 3, 4],
+                [1, 2, 3, 4],
+                [1, 2, 3, 4],
+                [1, 2, 3, 4],
+            ],
+            dtype=np.complex128,
+        )
+        n = len(a)
+        polar = cmath.rect(1.0, 2 * cmath.pi / n)
+        result = fft.fft2d(a, n, polar)
+        expected = np.fft.fft2(a)
+        expected.imag = np.multiply(expected.imag, -1)
         logging.debug(result)
         logging.debug(expected)
-        assert np.array_equal(np.array(result), expected)
+        assert np.array_equal(result, expected)
 
     @base.testing.test
     def c_impl_perf_test():
@@ -36,7 +47,7 @@ class fft_tests:
         start_time = time.time()
         res1 = fft.slow.slow_mult(array_a, array_b)
         slow_time = time.time()
-        res2 = fft.FFT().multiply(array_a, array_b)
+        res2 = fft.smth(array_a, array_b)
         fast_time = time.time()
         res3 = fft.slow.np_mult(array_a, array_b)
         numpy_time = time.time()
@@ -62,7 +73,7 @@ class fft_tests:
         def stress(array_size):
             array_a = np.random.randint(low=low, high=high, size=array_size)
             array_b = np.random.randint(low=low, high=high, size=array_size)
-            res_impl = fft.FFT().multiply(array_a, array_b)
+            res_impl = fft.smth(array_a, array_b)
             res_numpy = np.polymul(array_a, array_b)
 
             if not np.array_equal(res_impl, res_numpy):
@@ -86,8 +97,8 @@ if __name__ == '__main__':
     base.prepare_logger(level=logging.DEBUG)
     tests_list = [
         fft_tests.slow_test,
-        fft_tests.c_impl_stress_test,
-        fft_tests.c_impl_perf_test,
+        # fft_tests.c_impl_stress_test,
+        # fft_tests.c_impl_perf_test,
         fft_tests.fft_cpp_impl_test,
     ]
     base.testing.run_tests(tests_list)

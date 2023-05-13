@@ -1,2 +1,2 @@
 from . import slow
-from .c_wrappers import FFT
+from .c_wrappers import fft2d

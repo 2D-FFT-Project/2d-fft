@@ -12,8 +12,8 @@ def main():
         'c_impl_stress_test',
     ]
     tests_list = [
-        fft_tests.c_impl_perf_test,
-        fft_tests.c_impl_stress_test,
+        # fft_tests.c_impl_perf_test,
+        # fft_tests.c_impl_stress_test,
         fft_tests.fft_cpp_impl_test,
         fft_tests.slow_test,
         base_tests.subprocessTest,
