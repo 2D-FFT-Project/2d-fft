@@ -1,9 +1,14 @@
 from libcpp.complex cimport complex as cpp_complex
-from libcpp.vector cimport vector
+
+import numpy as np
+
+cimport numpy as np
+
+np.import_array()
 
 from . cimport fft
 
 
-def fft2d(a: vector[vector[cpp_complex[double]]], n: int, root: cpp_complex[double]) -> vector[vector[cpp_complex[double]]]:
-    fft.fft2d(a, n, root)
-    return a
+def fft2d(np.ndarray[np.complex128_t, ndim=2] a, int n):
+    fft.fft2d((< cpp_complex[double]*> a.data), n)
+    return

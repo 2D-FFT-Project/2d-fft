@@ -6,4 +6,4 @@ cdef extern from "fft.cpp":
     pass
 
 cdef extern from "fft.h" namespace "fft":
-    void fft2d(vector[vector[complex[double]]]& v, int N, complex[double] root)
+    void fft2d(complex[double]* v, int N) except +

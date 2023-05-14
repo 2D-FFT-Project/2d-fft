@@ -4,10 +4,7 @@ SILICON ?= $(shell uname -m)
 
 CXXV := $(shell $(CXX) --version | head -n 1)
 
-CXXFLAGS := -I . -std=c++17
-#  -O3 -ffast-math
-# CXXFLAGS_DEBUG := -Rpass=vector
-# # -Rpass-analysis=loop-vectorize -fsave-optimization-record -mllvm -force-vector-width=8 -mllvm -force-vector-interleave=4
+CXXFLAGS := -I . -std=c++17 -O3 -ffast-math -Rpass=vector -Rpass-analysis=loop-vectorize
 
 OBJ := fft.o
 

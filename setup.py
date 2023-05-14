@@ -1,5 +1,6 @@
 # isort: skip_file
 import os
+import numpy
 
 from setuptools import setup, find_packages
 from Cython.Build import cythonize
@@ -10,14 +11,22 @@ ignore_dirs = ['./venv']
 os.environ['CC'] = 'clang'
 os.environ['CXX'] = 'clang++'
 
-CXX_FLAGS = ['-O3', '-std=c++17', '-Wno-sign-compare', '-DCXX_MEASURE_TIME']
+CXX_FLAGS = [
+    '-O3',
+    '-std=c++17',
+    '-Wno-sign-compare',
+    '-DCXX_MEASURE_TIME',
+    '-ffast-math',
+]
+
+CXX_INCLUDE = ['fft_project/fft/c_wrappers', numpy.get_include()]
 
 EXTENSIONS = [
     Extension(
         name='fft_project.fft.c_wrappers.fft_wrapper',
         sources=['fft_project/fft/c_wrappers/fft_wrapper.pyx'],
         language='c++',
-        include_dirs=['fft_project/fft/c_wrappers'],
+        include_dirs=CXX_INCLUDE,
         extra_compile_args=CXX_FLAGS,
     )
 ]

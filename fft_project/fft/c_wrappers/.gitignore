@@ -4,3 +4,5 @@
 *_wrapper.cpp
 
 fft.o
+build/
+CMakeLists.txt
