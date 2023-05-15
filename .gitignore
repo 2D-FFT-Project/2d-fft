@@ -3,11 +3,6 @@
 
 __pycache__
 
-# Cython Trash
-*.so
-*.html
-*_wrapper.cpp
-
 /.vscode
 
 # Virtual env:
