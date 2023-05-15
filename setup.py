@@ -8,9 +8,6 @@ from distutils.extension import Extension
 
 ignore_dirs = ['./venv']
 
-os.environ['CC'] = 'clang'
-os.environ['CXX'] = 'clang++'
-
 CXX_FLAGS = [
     '-O3',
     '-std=c++17',

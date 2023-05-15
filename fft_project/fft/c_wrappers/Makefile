@@ -4,7 +4,7 @@ SILICON ?= $(shell uname -m)
 
 CXXV := $(shell $(CXX) --version | head -n 1)
 
-CXXFLAGS := -I . -std=c++17 -O3 -ffast-math -Rpass=vector -Rpass-analysis=loop-vectorize
+CXXFLAGS := -I . -std=c++17 -O3 -ffast-math -Rpass=vector -DCXX_MEASURE_TIME -lpthread
 
 OBJ := fft.o
 
