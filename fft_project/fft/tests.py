@@ -20,6 +20,7 @@ class fft_tests:
     @base.testing.test
     def fft_cpp_impl_test():
         n = 4096
+        logging.info(f'Matrix shape: {n}x{n}')
         a = np.zeros((n, n), dtype=np.complex128)
         a.real = np.random.rand(n, n)
 
