@@ -2,8 +2,7 @@
 #include <vector>
 #include <cmath>
 #include <iostream>
-
-// testing base cpp case speed
+#include <ctime>
 
 const double PI = std::acos(-1);
 
@@ -47,18 +46,15 @@ void fft2d(std::vector<std::vector<std::complex<double>>>& a) {
 }
 
 int main() {
-    std::vector<std::vector<std::complex<double>>> a = {
-        {0, 1, 2, 3},
-        {4, 5, 6, 7},
-        {8, 9, 10, 11},
-        {12, 13, 14, 15}
-    };
+    std::vector<std::vector<std::complex<double>>> a (1024, std::vector<std::complex<double>>(1024, 0));
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
     fft2d(a);
-    for (int i = 0; i < a.size(); i++) {
-        for (int j = 0; j < a[i].size(); j++) {
-            std::cout << a[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    // Calculate and print the elapsed time in seconds
+    double time_taken = (end.tv_sec - start.tv_sec) + 1e-9 * (end.tv_nsec - start.tv_nsec);
+    std::cout << "Time taken by function: " << time_taken << " seconds" << std::endl;
     return 0;
 }
