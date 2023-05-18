@@ -26,13 +26,20 @@ class fft_tests:
 
         start = time.time()
         expected = np.fft.fft2(result)
-        print(f'Numpy: {time.time() - start}')
+        numpy_time = time.time() - start
+        print(f'Numpy: {numpy_time}')
         start = time.time()
-        fft.fft2d(result, n, return_copy=False)
-        print(f'Our: {time.time() - start}')
+        result = fft.fft2d(result, return_copy=True)
+        our_time = time.time() - start
+        print(f'Our: {our_time}')
+        print(
+            f'{our_time / numpy_time * 100:.2f}% of Numpy time!',
+        )
         expected = abs(expected)
         result = abs(result)
-        assert np.allclose(result, expected, atol=0.05)
+        correctness = np.allclose(result, expected, atol=0.05)
+        print(f'Is the result correct: {correctness}')
+        assert correctness
 
 
 if __name__ == '__main__':
