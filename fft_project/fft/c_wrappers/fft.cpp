@@ -25,6 +25,7 @@ namespace fft {
 
 void _fft2d(fft_type *__restrict__ M, fft_type *__restrict__ W, int N,
             int rowsize, fft_type root) {
+  if (N == 1) return;
   if (N == 2) {
 #define Y(y, x) (M[(y)*rowsize + (x)])
     auto x00 = Y(0, 0);

@@ -21,15 +21,14 @@ class fft_tests:
     def fft_cpp_impl_test():
         n = 4096
         logging.info(f'Matrix shape: {n}x{n}')
-        a = np.zeros((n, n), dtype=np.complex128)
-        a.real = np.random.rand(n, n)
+        result = np.zeros((n, n), dtype=np.complex128)
+        result.real = np.random.rand(n, n)
 
-        result = np.copy(a)
         start = time.time()
-        expected = np.fft.fft2(a)
+        expected = np.fft.fft2(result)
         print(f'Numpy: {time.time() - start}')
         start = time.time()
-        fft.fft2d(result, n)
+        fft.fft2d(result, n, return_copy=False)
         print(f'Our: {time.time() - start}')
         expected = abs(expected)
         result = abs(result)
