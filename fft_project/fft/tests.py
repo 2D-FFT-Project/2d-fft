@@ -19,7 +19,7 @@ class fft_tests:
 
     @base.testing.test
     def fft_cpp_impl_test():
-        n = 4096
+        n = 4096 * 2
         logging.info(f'Matrix shape: {n}x{n}')
         result = np.zeros((n, n), dtype=np.complex128)
         result.real = np.random.rand(n, n)

@@ -14,6 +14,8 @@ CXX_FLAGS = [
     '-Wno-sign-compare',
     '-DCXX_MEASURE_TIME',
     '-ffast-math',
+    '-DUSE_THREAD',
+    '-DNPY_NO_DEPRECATED_API',
 ]
 
 CXX_INCLUDE = ['fft_project/fft/c_wrappers', numpy.get_include()]

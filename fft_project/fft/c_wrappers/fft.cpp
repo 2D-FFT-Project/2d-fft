@@ -2,6 +2,20 @@
 
 #include <iostream>
 
+#if defined(USE_CILK)
+#include <cilk/cilk.h>
+#define SPAWN cilk_spawn
+#define SYNC cilk_sync
+#elif defined(USE_THREAD)
+#include <thread>
+#ifndef P_THRESHOLD
+#define P_THRESHOLD 128
+#endif
+#else
+#define SPAWN
+#define SYNC
+#endif
+
 namespace base {
 using std::string, std::cout;
 std::string getenv(string key, string null_value = "") {
@@ -23,8 +37,8 @@ inline void print_matrix(const std::vector<std::vector<T>> &v) {
 namespace fft {
 #define forn(i, n) for (int i = 0; i < (int)(n); i++)
 
-void _fft2d(fft_type *__restrict__ M, fft_type *__restrict__ W, int N,
-            int rowsize, fft_type root) {
+void _fft2d(fft_type *__restrict__ M, size_t N,
+            size_t rowsize, fft_type root) {
   if (N == 1) return;
   if (N == 2) {
 #define Y(y, x) (M[(y)*rowsize + (x)])
@@ -41,11 +55,28 @@ void _fft2d(fft_type *__restrict__ M, fft_type *__restrict__ W, int N,
 
   int n = N >> 1;
 #define X(y, x, i, j) (M[((y)*n + (i)) * rowsize + ((x)*n) + j])
-  _fft2d(&X(0, 0, 0, 0), W, n, rowsize, root * root);
-  _fft2d(&X(0, 1, 0, 0), W, n, rowsize, root * root);
-  _fft2d(&X(1, 0, 0, 0), W, n, rowsize, root * root);
-  _fft2d(&X(1, 1, 0, 0), W, n, rowsize, root * root);
+#if defined(USE_THREAD)
+  if (n <= P_THRESHOLD) {
+    _fft2d(&X(0, 0, 0, 0), n, rowsize, root * root);
+    _fft2d(&X(0, 1, 0, 0), n, rowsize, root * root);
+    _fft2d(&X(1, 0, 0, 0), n, rowsize, root * root);
+    _fft2d(&X(1, 1, 0, 0), n, rowsize, root * root);  
+  } else {
+    std::thread t1([M, n, rowsize, root](){ _fft2d(&X(0, 0, 0, 0), n, rowsize, root * root); });
+    std::thread t2([M, n, rowsize, root](){ _fft2d(&X(0, 1, 0, 0), n, rowsize, root * root); });
+    std::thread t3([M, n, rowsize, root](){ _fft2d(&X(1, 0, 0, 0), n, rowsize, root * root); });
+                                            _fft2d(&X(1, 1, 0, 0), n, rowsize, root * root);
+    t1.join(), t2.join(), t3.join();
+  }
+#else
+  SPAWN _fft2d(&X(0, 0, 0, 0), n, rowsize, root * root);
+  SPAWN _fft2d(&X(0, 1, 0, 0), n, rowsize, root * root);
+  SPAWN _fft2d(&X(1, 0, 0, 0), n, rowsize, root * root);
+        _fft2d(&X(1, 1, 0, 0), n, rowsize, root * root);
+  SYNC;
+#endif
 
+  auto W = new fft_type[n];
   W[0] = 1;
   forn(i, n - 1) W[i + 1] = W[i] * root;
 
@@ -72,7 +103,6 @@ void fft2d(fft_type *M, int N) {
 
   auto root = std::polar(1., 2 * fft::pi / N);
   auto rev = new int[N];
-  auto W = new fft_type[N >> 1];
 
   forn(i, N) {
     int revi = 0;
@@ -89,7 +119,7 @@ void fft2d(fft_type *M, int N) {
     }
   }
 
-  _fft2d(M, W, N, N, root);
+  _fft2d(M, N, N, root);
 #if defined(CXX_MEASURE_TIME)
   clock_gettime(CLOCK_MONOTONIC, &end);
   printf("2d fft in cxx: %0.9fs\n",
