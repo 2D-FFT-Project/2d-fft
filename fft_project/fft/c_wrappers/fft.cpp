@@ -5,8 +5,8 @@ namespace fft {
 
 
 fft_type* pad_matrix(fft_type *Matrix, int N, int M) {
-  int new_size = std::max(N, M);
-  while (__builtin_popcount(new_size) != 1) {
+  int new_size = 1;
+  while (__builtin_popcount(new_size) != 1 && new_size <= std::max(N,M)) {
       new_size <<= 1; 
   }
   auto new_matrix = new fft_type[new_size * new_size];
