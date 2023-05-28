@@ -12,9 +12,9 @@ CXX_FLAGS = [
     '-O3',
     '-std=c++17',
     '-Wno-sign-compare',
-    '-DCXX_MEASURE_TIME',
     '-ffast-math',
     '-DUSE_THREAD',
+    '-Wno-macro-redefined',
     '-DNPY_NO_DEPRECATED_API',
 ]
 
