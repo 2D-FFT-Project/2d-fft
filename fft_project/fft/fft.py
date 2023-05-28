@@ -33,4 +33,4 @@ def fft2d(a: np.ndarray, return_copy: bool = False) -> np.ndarray:
     as an input / output type of matrix
 
     """
-    return c_wrappers.fft2d(a, a.shape[0], return_copy)
+    return c_wrappers.fft2d(a, a.shape[0], a.shape[1], return_copy)

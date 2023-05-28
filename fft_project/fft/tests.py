@@ -20,9 +20,10 @@ class fft_tests:
     @base.testing.test
     def fft_cpp_impl_test():
         n = 4096
-        logging.info(f'Matrix shape: {n}x{n}')
-        result = np.zeros((n, n), dtype=np.complex128)
-        result.real = np.random.rand(n, n)
+        m = n * 2
+        logging.info(f'Matrix shape: {n}x{m}')
+        result = np.zeros((n, m), dtype=np.complex128)
+        result.real = np.random.rand(n, m)
 
         start = time.time()
         expected = np.fft.fft2(result)

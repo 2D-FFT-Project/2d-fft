@@ -10,7 +10,7 @@ const double pi = acos(-1);
 typedef complex<double> fft_type;
 typedef fft_type *fft_matrix;
 
-void fft2d(complex<double> *M, int N);
+void fft2d(complex<double> *V, int N, int M);
 } // namespace fft
 
 #endif
