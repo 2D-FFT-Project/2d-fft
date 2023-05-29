@@ -106,15 +106,16 @@ void _fft2d(
 
 
 void _plan(
-    fft_type *__restrict__ V,
+    fft_type *V,
     size_t N,
     size_t M,
     size_t rowsize,
     fft_type rooti,
     fft_type rootj
   ) {
+  // Welcome to shitty code : )
   if (N == M) _fft2d(V, N, rowsize, rooti);
-  else if (N > M) { // vertical split
+  else if (N > M) {
     int n = N >> 1;
 #define Y(y, i, j) (V[((y)*n + (i)) * rowsize + j])
     _plan(&Y(0, 0, 0), n, M, rowsize, rooti * rooti, rootj);
@@ -132,7 +133,7 @@ void _plan(
         Y(1, i, j) = y00 - y10;
       }
     }
-  } else { // horizontal split 
+  } else {
     int m = M >> 1;
 #define X(x, i, j) (V[(i) * rowsize + ((x)*m) + j])
     _plan(&X(0, 0, 0), N, m, rowsize, rooti, rootj * rootj);
@@ -162,21 +163,17 @@ void fft2d(fft_type *V, int N, int M) {
   assert(__builtin_popcount(N) == 1 && "dim[0] has to be a power of 2");
   assert(__builtin_popcount(M) == 1 && "dim[1] has to be a power of 2");
 
-  int lg_n = log2(N), lg_m = log2(M);
-  auto rev_n = new int[N], rev_m = new int[M];
+  auto revbits = [](size_t *v, size_t n) {
+    int lg_n = log2(n);
+    forn(i, n) {
+      int revi = 0;
+      forn(l, lg_n) revi |= ((i >> l) & 1) << (lg_n - l - 1);
+      v[i] = revi;
+    }
+  };
 
-  // Welcome to shitty code : )
-  forn(i, N) {
-    int revi = 0;
-    forn(l, lg_n) revi |= ((i >> l) & 1) << (lg_n - l - 1);
-    rev_n[i] = revi;
-  }
-
-  forn(i, M) {
-    int revi = 0;
-    forn(l, lg_m) revi |= ((i >> l) & 1) << (lg_m - l - 1);
-    rev_m[i] = revi;
-  }
+  size_t *rev_n = new size_t[N], *rev_m = new size_t[M];
+  revbits(rev_n, N), revbits(rev_m, M);  
 
   forn(i, N) {
     int rev_i = rev_n[i];
