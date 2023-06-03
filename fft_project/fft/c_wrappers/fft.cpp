@@ -6,12 +6,13 @@
 #include <cilk/cilk.h>
 #define SPAWN cilk_spawn
 #define SYNC cilk_sync
-#elif defined(USE_THREAD)
+#else
+#if defined(USE_THREAD)
 #include <thread>
 #ifndef P_THRESHOLD
 #define P_THRESHOLD 128
 #endif
-#else
+#endif
 #define SPAWN
 #define SYNC
 #endif
@@ -44,7 +45,8 @@ void _fft2d(
     fft_type *__restrict__ V,
     size_t N,
     size_t rowsize,
-    fft_type root
+    fft_type root,
+    int use_threads
   ) {
 
   // base case {
@@ -66,23 +68,23 @@ void _fft2d(
   int n = N >> 1;
 #define X(y, x, i, j) (V[((y)*n + (i)) * rowsize + ((x)*n) + j])
 #if defined(USE_THREAD)
-  if (n <= 64) {
-    _fft2d(&X(0, 0, 0, 0), n, rowsize, root * root);
-    _fft2d(&X(0, 1, 0, 0), n, rowsize, root * root);
-    _fft2d(&X(1, 0, 0, 0), n, rowsize, root * root);
-    _fft2d(&X(1, 1, 0, 0), n, rowsize, root * root);  
+  if (n <= P_THRESHOLD || !use_threads) {
+    _fft2d(&X(0, 0, 0, 0), n, rowsize, root * root, use_threads);
+    _fft2d(&X(0, 1, 0, 0), n, rowsize, root * root, use_threads);
+    _fft2d(&X(1, 0, 0, 0), n, rowsize, root * root, use_threads);
+    _fft2d(&X(1, 1, 0, 0), n, rowsize, root * root, use_threads);  
   } else {
-    std::thread t1([V, n, rowsize, root](){ _fft2d(&X(0, 0, 0, 0), n, rowsize, root * root); });
-    std::thread t2([V, n, rowsize, root](){ _fft2d(&X(0, 1, 0, 0), n, rowsize, root * root); });
-    std::thread t3([V, n, rowsize, root](){ _fft2d(&X(1, 0, 0, 0), n, rowsize, root * root); });
-                                            _fft2d(&X(1, 1, 0, 0), n, rowsize, root * root);
+    std::thread t1([V, n, rowsize, root, use_threads](){ _fft2d(&X(0, 0, 0, 0), n, rowsize, root * root, use_threads); });
+    std::thread t2([V, n, rowsize, root, use_threads](){ _fft2d(&X(0, 1, 0, 0), n, rowsize, root * root, use_threads); });
+    std::thread t3([V, n, rowsize, root, use_threads](){ _fft2d(&X(1, 0, 0, 0), n, rowsize, root * root, use_threads); });
+                                                         _fft2d(&X(1, 1, 0, 0), n, rowsize, root * root, use_threads);
     t1.join(), t2.join(), t3.join();
   }
 #else
-  SPAWN _fft2d(&X(0, 0, 0, 0), n, rowsize, root * root);
-  SPAWN _fft2d(&X(0, 1, 0, 0), n, rowsize, root * root);
-  SPAWN _fft2d(&X(1, 0, 0, 0), n, rowsize, root * root);
-        _fft2d(&X(1, 1, 0, 0), n, rowsize, root * root);
+  SPAWN _fft2d(&X(0, 0, 0, 0), n, rowsize, root * root, use_threads);
+  SPAWN _fft2d(&X(0, 1, 0, 0), n, rowsize, root * root, use_threads);
+  SPAWN _fft2d(&X(1, 0, 0, 0), n, rowsize, root * root, use_threads);
+        _fft2d(&X(1, 1, 0, 0), n, rowsize, root * root, use_threads);
   SYNC;
 #endif
 
@@ -111,15 +113,16 @@ void _plan(
     size_t M,
     size_t rowsize,
     fft_type rooti,
-    fft_type rootj
+    fft_type rootj,
+    int use_threads
   ) {
   // Welcome to shitty code : )
-  if (N == M) _fft2d(V, N, rowsize, rooti);
+  if (N == M) _fft2d(V, N, rowsize, rooti, use_threads);
   else if (N > M) {
     int n = N >> 1;
 #define Y(y, i, j) (V[((y)*n + (i)) * rowsize + j])
-    _plan(&Y(0, 0, 0), n, M, rowsize, rooti * rooti, rootj);
-    _plan(&Y(1, 0, 0), n, M, rowsize, rooti * rooti, rootj);
+    _plan(&Y(0, 0, 0), n, M, rowsize, rooti * rooti, rootj, use_threads);
+    _plan(&Y(1, 0, 0), n, M, rowsize, rooti * rooti, rootj, use_threads);
     
     auto W = new fft_type[n];
     W[0] = 1;
@@ -136,8 +139,8 @@ void _plan(
   } else {
     int m = M >> 1;
 #define X(x, i, j) (V[(i) * rowsize + ((x)*m) + j])
-    _plan(&X(0, 0, 0), N, m, rowsize, rooti, rootj * rootj);
-    _plan(&X(1, 0, 0), N, m, rowsize, rooti, rootj * rootj);
+    _plan(&X(0, 0, 0), N, m, rowsize, rooti, rootj * rootj, use_threads);
+    _plan(&X(1, 0, 0), N, m, rowsize, rooti, rootj * rootj, use_threads);
     
     auto W = new fft_type[m];
     W[0] = 1;
@@ -154,15 +157,13 @@ void _plan(
   }
 }
 
-
-void fft2d(fft_type *V, int N, int M) {
+void fft2d(fft_type *V, int N, int M, int use_threads) {
 #if defined(CXX_MEASURE_TIME)
   struct timespec start, end;
   clock_gettime(CLOCK_MONOTONIC, &start);
 #endif
   assert(__builtin_popcount(N) == 1 && "dim[0] has to be a power of 2");
   assert(__builtin_popcount(M) == 1 && "dim[1] has to be a power of 2");
-
   auto revbits = [](size_t *v, size_t n) {
     int lg_n = log2(n);
     forn(i, n) {
@@ -186,7 +187,8 @@ void fft2d(fft_type *V, int N, int M) {
   _plan(
     V, N, M, M,
     std::polar(1., 2 * fft::pi / N),
-    std::polar(1., 2 * fft::pi / M)
+    std::polar(1., 2 * fft::pi / M),
+    use_threads
   );
 #if defined(CXX_MEASURE_TIME)
   clock_gettime(CLOCK_MONOTONIC, &end);
@@ -198,22 +200,9 @@ void fft2d(fft_type *V, int N, int M) {
 
 int main(int argc, char **argv) {
   using namespace std;
+  int use_threads = 0;
   const uint32_t N = stoi(string(argv[1]));
   assert(__builtin_popcount(N) == 1);
   auto matrix = new fft::fft_type[N * N];
-  {
-      // forn(i, N) forn(j, N) matrix[i * N + j] = 2 * i + j;
-      // forn(i, N) {
-      //   forn(j, N) cout << matrix[i * N + j] << ' ';
-      //   cout << '\n';
-      // }
-  } {
-    // cout << string(8, '-') << '\n';
-    fft::fft2d(matrix, N, N);
-    // cout << "Result:" << '\n';
-    // forn(i, N) {
-    //   forn(j, N) cout << matrix[i * N + j] << ' ';
-    //   cout << '\n';
-    // }
-  }
+  fft::fft2d(matrix, N, N, use_threads);
 }

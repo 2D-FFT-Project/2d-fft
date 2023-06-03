@@ -30,7 +30,7 @@ class fft_tests:
         numpy_time = time.time() - start
         print(f'Numpy: {numpy_time}')
         start = time.time()
-        result = fft.fft2d(result, return_copy=True)
+        result = fft.fft2d(result, return_copy=True, use_threads=True)
         our_time = time.time() - start
         print(f'Our: {our_time}')
         print(
