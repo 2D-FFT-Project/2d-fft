@@ -40,7 +40,6 @@ inline void print_matrix(T* V, int N, int M) {
 namespace fft {
 #define forn(i, n) for (int i = 0; i < (int)(n); i++)
 
-
 void _fft2d(
     fft_type *__restrict__ V,
     size_t N,
@@ -68,6 +67,7 @@ void _fft2d(
   int n = N >> 1;
 #define X(y, x, i, j) (V[((y)*n + (i)) * rowsize + ((x)*n) + j])
 #if defined(USE_THREAD)
+  // TODO(gyzavyalov): work-stealing
   if (n <= P_THRESHOLD || !use_threads) {
     _fft2d(&X(0, 0, 0, 0), n, rowsize, root * root, use_threads);
     _fft2d(&X(0, 1, 0, 0), n, rowsize, root * root, use_threads);
@@ -157,7 +157,7 @@ void _plan(
   }
 }
 
-void fft2d(fft_type *V, int N, int M, int use_threads) {
+void fft2d(fft_type *V, int N, int M, int use_threads, int inverse) {
 #if defined(CXX_MEASURE_TIME)
   struct timespec start, end;
   clock_gettime(CLOCK_MONOTONIC, &start);
@@ -186,10 +186,12 @@ void fft2d(fft_type *V, int N, int M, int use_threads) {
 
   _plan(
     V, N, M, M,
-    std::polar(1., 2 * fft::pi / N),
-    std::polar(1., 2 * fft::pi / M),
+    std::polar(1., (inverse ? 2 : -2) * fft::pi / N),
+    std::polar(1., (inverse ? 2 : -2) * fft::pi / M),
     use_threads
   );
+
+  if (inverse) forn (i, N) forn (j, M) V[i * M + j] /= N * M;
 #if defined(CXX_MEASURE_TIME)
   clock_gettime(CLOCK_MONOTONIC, &end);
   printf("2d fft in cxx: %0.9fs\n",
@@ -204,5 +206,5 @@ int main(int argc, char **argv) {
   const uint32_t N = stoi(string(argv[1]));
   assert(__builtin_popcount(N) == 1);
   auto matrix = new fft::fft_type[N * N];
-  fft::fft2d(matrix, N, N, use_threads);
+  fft::fft2d(matrix, N, N, use_threads, 0);
 }

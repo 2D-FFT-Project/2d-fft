@@ -4,7 +4,10 @@ from . import c_wrappers
 
 
 def fft2d(
-    v: np.ndarray, return_copy: bool = False, use_threads: bool = True
+    v: np.ndarray,
+    return_copy: bool = False,
+    use_threads: bool = True,
+    inverse: bool = False,
 ) -> np.ndarray:
     """
     Perform a 2D fast Fourier transform on the input array.
@@ -38,4 +41,4 @@ def fft2d(
 
     """
     a = v.astype(np.complex128, copy=True) if return_copy else v
-    return c_wrappers.fft2d(a, a.shape[0], a.shape[1], use_threads)
+    return c_wrappers.fft2d(a, a.shape[0], a.shape[1], use_threads, inverse)
