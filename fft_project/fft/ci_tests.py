@@ -7,6 +7,7 @@ from fft_project import base
 from fft_project import fft
 
 VERBOSE = False
+SIZE = 1000
 
 
 def _test_random_matrix(n, m, i):
@@ -25,13 +26,13 @@ def _test_random_matrix(n, m, i):
 class ci_tests:
     @base.testing.test
     def square_stress():
-        for i in range(1000):
+        for i in range(SIZE):
             n = 2 ** random.randint(1, 10)
             _test_random_matrix(n, n, i)
 
     @base.testing.test
     def rect_stress():
-        for i in range(1000):
+        for i in range(SIZE):
             _test_random_matrix(
                 2 ** random.randint(1, 10), 2 ** random.randint(1, 10), i
             )

@@ -9,10 +9,12 @@ np.import_array()
 from . cimport fft
 
 
-def fft2d(np.ndarray[np.complex128_t, ndim=2] a, int n, int m, bint return_copy=True):
-    if not return_copy:
-        fft.fft2d((< cpp_complex[double]*> a.data), n, m)
-        return
-    cdef np.ndarray[np.complex128_t, ndim = 2] b = a.copy()
-    fft.fft2d((< cpp_complex[double]*> b.data), n, m)
-    return b
+def fft2d(
+    np.ndarray[np.complex128_t, ndim=2] a,
+    int n,
+    int m,
+    bint use_threads=True,
+    bint inverse=False
+):
+    fft.fft2d(( < cpp_complex[double]*> a.data), n, m, use_threads, inverse)
+    return a
