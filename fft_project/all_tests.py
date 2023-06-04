@@ -14,6 +14,7 @@ def main():
         ci_tests.square_stress,
         fft_tests.fft_cpp_impl_test,
         fft_tests.slow_test,
+        fft_tests.inverse_test,
     ]
     base.testing.run_tests(tests_list)
 

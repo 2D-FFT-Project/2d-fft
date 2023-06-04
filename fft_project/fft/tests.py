@@ -50,9 +50,10 @@ class fft_tests:
         inversed_numpy = np.fft.ifft2(transformed)
         numpy_time = time.time() - start
         logging.info(f'Numpy: {numpy_time}')
+        inversed_our = transformed
         start = time.time()
         inversed_our = fft.fft2d(
-            transformed, return_copy=True, use_threads=False, inverse=True
+            inversed_our, return_copy=True, use_threads=False, inverse=True
         )
         our_time = time.time() - start
         logging.info(f'Our: {our_time}')
