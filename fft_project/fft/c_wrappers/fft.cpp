@@ -45,8 +45,7 @@ void _fft2d(
     size_t N,
     size_t rowsize,
     fft_type *__restrict__ W,
-    size_t W_rowsize,
-    int level,
+    int step,
     int use_threads
   ) {
   // base case {
@@ -68,7 +67,7 @@ void _fft2d(
   int n = N >> 1;
 
 #define X(y, x, i, j) (V[((y)*n + (i)) * rowsize + ((x)*n) + j])
-#define params n, rowsize, W, W_rowsize, level + 1, use_threads
+#define params n, rowsize, W, (step << 1), use_threads
 
 #if defined(USE_THREAD)
   // TODO(gyzavyalov): work-stealing
@@ -78,10 +77,10 @@ void _fft2d(
     _fft2d(&X(1, 0, 0, 0), params);
     _fft2d(&X(1, 1, 0, 0), params);  
   } else {
-    std::thread t1([V, W, W_rowsize, level, n, rowsize, use_threads](){ _fft2d(&X(0, 0, 0, 0), params); });
-    std::thread t2([V, W, W_rowsize, level, n, rowsize, use_threads](){ _fft2d(&X(0, 1, 0, 0), params); });
-    std::thread t3([V, W, W_rowsize, level, n, rowsize, use_threads](){ _fft2d(&X(1, 0, 0, 0), params); });
-                                                                        _fft2d(&X(1, 1, 0, 0), params);
+    std::thread t1([V, W, step, n, rowsize, use_threads](){ _fft2d(&X(0, 0, 0, 0), params); });
+    std::thread t2([V, W, step, n, rowsize, use_threads](){ _fft2d(&X(0, 1, 0, 0), params); });
+    std::thread t3([V, W, step, n, rowsize, use_threads](){ _fft2d(&X(1, 0, 0, 0), params); });
+                                                            _fft2d(&X(1, 1, 0, 0), params);
     t1.join(), t2.join(), t3.join();
   }
 #else
@@ -95,9 +94,9 @@ void _fft2d(
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       auto x00 = X(0, 0, i, j);
-      auto x10 = X(1, 0, i, j) * W[W_rowsize * level + i];
-      auto x01 = X(0, 1, i, j) * W[W_rowsize * level + j];
-      auto x11 = X(1, 1, i, j) * W[W_rowsize * level + i] * W[W_rowsize * level + j]; // with matrix?
+      auto x10 = X(1, 0, i, j) * W[step * i];
+      auto x01 = X(0, 1, i, j) * W[step * j];
+      auto x11 = X(1, 1, i, j) * W[step * (i + j)];
       X(0, 0, i, j) = x00 + x10 + x01 + x11;
       X(0, 1, i, j) = x00 + x10 - x01 - x11;
       X(1, 0, i, j) = x00 - x10 + x01 - x11;
@@ -113,23 +112,22 @@ void _plan(
     size_t M,
     size_t rowsize,
     fft_type *__restrict__ W,
-    size_t W_rowsize,
-    int level_i,
-    int level_j,
+    int step_i,
+    int step_j,
     int use_threads
   ) {
-  if (N == M) _fft2d(V, N, rowsize, W, W_rowsize, level_i, use_threads);
+  if (N == M) _fft2d(V, N, rowsize, W, step_i, use_threads);
   else if (N > M) {
     int n = N >> 1;
 #define Y(y, i, j) (V[((y)*n + (i)) * rowsize + j])
-#define params n, M, rowsize, W, W_rowsize, level_i + 1, level_j, use_threads
+#define params n, M, rowsize, W, (step_i << 1), step_j, use_threads
     _plan(&Y(0, 0, 0), params);
     _plan(&Y(1, 0, 0), params);
     
     forn (i, n) {
       forn (j, M) {
         auto y00 = Y(0, i, j);
-        auto y10 = Y(1, i, j) * W[W_rowsize * level_i + i];
+        auto y10 = Y(1, i, j) * W[i * step_i];
         Y(0, i, j) = y00 + y10;
         Y(1, i, j) = y00 - y10;
       }
@@ -137,14 +135,14 @@ void _plan(
   } else {
     int m = M >> 1;
 #define X(x, i, j) (V[(i) * rowsize + ((x)*m) + j])
-#define params N, m, rowsize, W, W_rowsize, level_i, level_j + 1, use_threads
+#define params N, m, rowsize, W, step_i, (step_j << 1), use_threads
     _plan(&X(0, 0, 0), params);
     _plan(&X(1, 0, 0), params);
     
     forn (i, N) {
       forn (j, m) {
         auto x00 = X(0, i, j);
-        auto x10 = X(1, i, j) * W[W_rowsize * level_j + j];
+        auto x10 = X(1, i, j) * W[j * step_j];
         X(0, i, j) = x00 + x10;
         X(1, i, j) = x00 - x10;
       }
@@ -183,25 +181,25 @@ void fft2d(fft_type *V, int N, int M, int use_threads, int inverse) {
 
   int mxdim = std::max(N, M);
   const int lg_dim = log2(mxdim);
-  int mdim = mxdim >> 1;
-  auto W = new fft_type[mdim * lg_dim];
+  auto W = new fft_type[mxdim];
   auto rooti = std::polar(1., (inverse ? 2 : -2) * fft::pi / mxdim);
 
   auto cur_root = rooti;
-  for (int level = 0; level < lg_dim; level++, cur_root *= cur_root) {
-    W[level * mdim] = 1;
-    forn (i, (mdim >> level) - 1)
-      W[level * mdim + i + 1] = W[level * mdim + i] * cur_root;
-  }
+  W[0] = 1;
+  forn (i, mxdim - 1)
+    W[i + 1] = W[i] * cur_root;
+  
 
   _plan(
     V, N, M, M,
-    W, mdim,
-    lg_dim - log2(N), lg_dim - log2(M),
+    W,
+    (1ll << int(lg_dim - log2(N))), (1ll << int(lg_dim - log2(M))),
     use_threads
   );
-
   if (inverse) forn (i, N) forn (j, M) V[i * M + j] /= N * M;
+  delete [] rev_n;
+  delete [] rev_m;
+  delete [] W;
 #if defined(CXX_MEASURE_TIME)
   clock_gettime(CLOCK_MONOTONIC, &end);
   printf("2d fft in cxx: %0.9fs\n",
