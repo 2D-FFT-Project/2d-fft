@@ -186,9 +186,7 @@ void fft2d(fft_type *V, int N, int M, int use_threads, int inverse) {
 
   auto cur_root = rooti;
   W[0] = 1;
-  forn (i, mxdim - 1)
-    W[i + 1] = W[i] * cur_root;
-  
+  forn (i, mxdim - 1) W[i + 1] = W[i] * cur_root;
 
   _plan(
     V, N, M, M,

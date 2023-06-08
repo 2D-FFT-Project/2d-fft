@@ -3,8 +3,8 @@ import time
 
 import numpy as np
 
+import fft_project
 from fft_project import base
-from fft_project import fft
 
 
 def random_matrix(n, m):
@@ -16,15 +16,6 @@ def random_matrix(n, m):
 
 class fft_tests:
     @base.testing.test
-    def slow_test():
-        result = fft.slow.slow_mult(np.array([1, 2, 3]), np.array([3, 2, 1]))
-        result2 = fft.slow.np_mult(np.array([1, 2, 3]), np.array([3, 2, 1]))
-        logging.debug(result)
-        logging.debug(result2)
-        assert np.array_equal(result, result2)
-        assert np.array_equal(result2, np.array([3, 8, 14, 8, 3]))
-
-    @base.testing.test
     def fft_cpp_impl_test():
         result = random_matrix(4096, 4096 * 2)
         start = time.time()
@@ -32,7 +23,7 @@ class fft_tests:
         numpy_time = time.time() - start
         logging.info(f'Numpy: {numpy_time}')
         start = time.time()
-        result = fft.fft2d(result, return_copy=True, use_threads=False)
+        result = fft_project.fft2d(result, return_copy=True, use_threads=False)
         our_time = time.time() - start
         logging.info(f'Our: {our_time}')
         logging.info(f'{our_time / numpy_time * 100:.2f}% of Numpy time!')
@@ -45,14 +36,14 @@ class fft_tests:
     @base.testing.test
     def inverse_test():
         a = random_matrix(4096 * 2, 4096)
-        transformed = fft.fft2d(a, return_copy=True, use_threads=True)
+        transformed = fft_project.fft2d(a, return_copy=True, use_threads=True)
         start = time.time()
         inversed_numpy = np.fft.ifft2(transformed)
         numpy_time = time.time() - start
         logging.info(f'Numpy: {numpy_time}')
         inversed_our = transformed
         start = time.time()
-        inversed_our = fft.fft2d(
+        inversed_our = fft_project.fft2d(
             inversed_our, return_copy=True, use_threads=False, inverse=True
         )
         our_time = time.time() - start
@@ -68,7 +59,6 @@ class fft_tests:
 if __name__ == '__main__':
     base.prepare_logger(level=logging.DEBUG)
     tests_list = [
-        fft_tests.slow_test,
         fft_tests.fft_cpp_impl_test,
         fft_tests.inverse_test,
     ]

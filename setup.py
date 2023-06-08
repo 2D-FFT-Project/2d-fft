@@ -34,11 +34,11 @@ setup(
     name='fft_project',
     install_requires=[
         'numpy>=1.19.0',
-        'cython>=0.29.21',
+        'Cython>=0.29.21',
     ],
     setup_requires=[
         'numpy>=1.19.0',
-        'cython>=0.29.21',
+        'Cython>=0.29.21',
     ],
     version='1.0.0',
     description='A package for 2D FFT computations',
