@@ -1,1 +1,1 @@
-from . import fft
+from .fft import *

@@ -1,8 +1,6 @@
 import logging
 import traceback
 
-from fft_project.base import tools
-
 
 def test(test):
     def attributed_test():
