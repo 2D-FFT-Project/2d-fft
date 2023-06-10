@@ -9,9 +9,6 @@
 #else
 #if defined(USE_THREAD)
 #include <thread>
-#ifndef P_THRESHOLD
-#define P_THRESHOLD 128
-#endif
 #endif
 #define SPAWN
 #define SYNC
@@ -71,16 +68,17 @@ void _fft2d(
 
 #if defined(USE_THREAD)
   // TODO(gyzavyalov): work-stealing
-  if (n <= P_THRESHOLD || !use_threads) {
+  if (!use_threads) {
     _fft2d(&X(0, 0, 0, 0), params);
     _fft2d(&X(0, 1, 0, 0), params);
     _fft2d(&X(1, 0, 0, 0), params);
     _fft2d(&X(1, 1, 0, 0), params);  
   } else {
-    std::thread t1([V, W, step, n, rowsize, use_threads](){ _fft2d(&X(0, 0, 0, 0), params); });
-    std::thread t2([V, W, step, n, rowsize, use_threads](){ _fft2d(&X(0, 1, 0, 0), params); });
-    std::thread t3([V, W, step, n, rowsize, use_threads](){ _fft2d(&X(1, 0, 0, 0), params); });
-                                                            _fft2d(&X(1, 1, 0, 0), params);
+    #define mthread_params n, rowsize, W, (step << 1), (use_threads - 1)
+    std::thread t1([V, W, step, n, rowsize, use_threads](){ _fft2d(&X(0, 0, 0, 0), mthread_params); });
+    std::thread t2([V, W, step, n, rowsize, use_threads](){ _fft2d(&X(0, 1, 0, 0), mthread_params); });
+    std::thread t3([V, W, step, n, rowsize, use_threads](){ _fft2d(&X(1, 0, 0, 0), mthread_params); });
+                                                            _fft2d(&X(1, 1, 0, 0), mthread_params);
     t1.join(), t2.join(), t3.join();
   }
 #else
@@ -192,7 +190,7 @@ void fft2d(fft_type *V, int N, int M, int use_threads, int inverse) {
     V, N, M, M,
     W,
     (1ll << int(lg_dim - log2(N))), (1ll << int(lg_dim - log2(M))),
-    use_threads
+    use_threads ? 2 : 0
   );
   if (inverse) forn (i, N) forn (j, M) V[i * M + j] /= N * M;
   delete [] rev_n;
@@ -208,7 +206,7 @@ void fft2d(fft_type *V, int N, int M, int use_threads, int inverse) {
 
 int main(int argc, char **argv) {
   using namespace std;
-  int use_threads = 0;
+  int use_threads = 1;
   const uint32_t N = stoi(string(argv[1]));
   assert(__builtin_popcount(N) == 1);
   auto matrix = new fft::fft_type[N * N];
