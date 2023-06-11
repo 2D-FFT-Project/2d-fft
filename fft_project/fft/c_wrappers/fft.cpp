@@ -67,8 +67,7 @@ void _fft2d(
 #define params n, rowsize, W, (step << 1), use_threads
 
 #if defined(USE_THREAD)
-  // TODO(gyzavyalov): work-stealing
-  if (!use_threads) {
+  if (rowsize <= 512 || !use_threads) {
     _fft2d(&X(0, 0, 0, 0), params);
     _fft2d(&X(0, 1, 0, 0), params);
     _fft2d(&X(1, 0, 0, 0), params);
