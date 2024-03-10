@@ -8,6 +8,8 @@ from distutils.extension import Extension
 
 ignore_dirs = ['./venv']
 
+REQUIREMENTS = ['numpy>=1.19.0', 'Cython>=0.29.21', 'scipy>=1.10.1']
+
 CXX_FLAGS = [
     '-O3',
     '-std=c++17',
@@ -32,14 +34,8 @@ EXTENSIONS = [
 
 setup(
     name='fft_project',
-    install_requires=[
-        'numpy>=1.19.0',
-        'Cython>=0.29.21',
-    ],
-    setup_requires=[
-        'numpy>=1.19.0',
-        'Cython>=0.29.21',
-    ],
+    install_requires=REQUIREMENTS,
+    setup_requires=REQUIREMENTS,
     version='1.0.0',
     description='A package for 2D FFT computations',
     packages=find_packages(),
