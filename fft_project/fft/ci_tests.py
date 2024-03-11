@@ -11,7 +11,7 @@ SIZE = 1000
 
 
 def _test_random_matrix(n, m, i):
-    result = np.zeros((n, m), dtype=np.complex128)
+    result = np.zeros((n, m), dtype=np.complex64)
     result.real = np.random.rand(n, m)
     expected = np.fft.fft2(result)
     _ = fft.fft2d(result, return_copy=False)

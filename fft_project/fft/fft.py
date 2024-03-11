@@ -36,9 +36,9 @@ def fft2d(
 
     Notes
     -----
-    This function uses the `numpy.ndarray[np.complex128]`
+    This function uses the `numpy.ndarray[np.complex64]`
     as an input / output type of matrix
 
     """
-    a = v.astype(np.complex128, copy=True) if return_copy else v
+    a = v.astype(np.complex64, copy=True) if return_copy else v
     return c_wrappers.fft2d(a, a.shape[0], a.shape[1], use_threads, inverse)

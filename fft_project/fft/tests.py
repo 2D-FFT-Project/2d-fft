@@ -9,7 +9,7 @@ from fft_project import base
 
 def random_matrix(n, m):
     logging.info(f'Matrix shape: {n}x{m}')
-    result = np.zeros((n, m), dtype=np.complex128)
+    result = np.zeros((n, m), dtype=np.complex64)
     result.real = np.random.rand(n, m)
     return result
 
