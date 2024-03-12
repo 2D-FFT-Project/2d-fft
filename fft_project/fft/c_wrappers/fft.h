@@ -7,10 +7,10 @@ namespace fft {
 using std::vector, std::pair, std::complex;
 
 const double pi = acos(-1);
-typedef complex<double> fft_type;
+typedef complex<float> fft_type;
 typedef fft_type *fft_matrix;
 
-void fft2d(complex<double> *V, int N, int M, int use_threads, int inverse);
+void fft2d(complex<float> *V, int N, int M, int use_threads, int inverse);
 } // namespace fft
 
 #endif
