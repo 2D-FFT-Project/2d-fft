@@ -19,11 +19,11 @@ class fft_tests:
     def fft_cpp_impl_test():
         result = random_matrix(4096, 4096 * 2)
         start = time.time()
-        expected = scipy.fft.fft2(result)
+        expected = scipy.fft.fft2(result, workers = -1)
         scipy_time = time.time() - start
         logging.info(f'Scipy: {scipy_time}')
         start = time.time()
-        result = fft_project.fft2d(result, return_copy=False, use_threads=False)
+        result = fft_project.fft2d(result, return_copy=False, use_threads=True)
         our_time = time.time() - start
         logging.info(f'Our: {our_time}')
         logging.info(f'{our_time / scipy_time * 100:.2f}% of Scipy time!')
