@@ -14,7 +14,23 @@ def random_matrix(n, m):
     return result
 
 
+mat_size = (4096 * 4, 4096 * 4)
+
 class fft_tests:
+    @base.testing.test
+    def run_ours():
+        result = random_matrix(*mat_size)
+        result = fft_project.fft2d(result, return_copy=False, use_threads=False)
+
+    @base.testing.test
+    def run_scipy():
+        result = random_matrix(*mat_size)
+        expected = scipy.fft.fft2(result)
+
+    @base.testing.test
+    def matrix_creation_run():
+        result = random_matrix(*mat_size)
+
     @base.testing.test
     def fft_cpp_impl_test():
         result = random_matrix(4096, 4096 * 2)

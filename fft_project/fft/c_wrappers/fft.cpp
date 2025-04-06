@@ -14,6 +14,14 @@
 #define SYNC
 #endif
 
+#ifdef __GNUC__
+  #define ALWAYS_INLINE __attribute__((always_inline)) inline
+#elif defined(_MSC_VER)
+  #define ALWAYS_INLINE __forceinline
+#else
+  #define ALWAYS_INLINE inline
+#endif
+
 namespace base {
 using std::string, std::cout;
 std::string getenv(string key, string null_value = "") {
@@ -37,6 +45,7 @@ inline void print_matrix(T* V, int N, int M) {
 namespace fft {
 #define forn(i, n) for (int i = 0; i < (int)(n); i++)
 
+ALWAYS_INLINE
 void _fft2d(
     fft_type *__restrict__ V,
     size_t N,
@@ -59,7 +68,7 @@ void _fft2d(
     Y(1, 1) = x00 - x10 - x01 + x11;
     return;
   }
-  // } base case 
+  // } base case
 
   int n = N >> 1;
 
@@ -71,7 +80,7 @@ void _fft2d(
     _fft2d(&X(0, 0, 0, 0), params);
     _fft2d(&X(0, 1, 0, 0), params);
     _fft2d(&X(1, 0, 0, 0), params);
-    _fft2d(&X(1, 1, 0, 0), params);  
+    _fft2d(&X(1, 1, 0, 0), params);
   } else {
     #define mthread_params n, rowsize, W, (step << 1), (use_threads - 1)
     std::thread t1([V, W, step, n, rowsize, use_threads](){ _fft2d(&X(0, 0, 0, 0), mthread_params); });
@@ -103,6 +112,7 @@ void _fft2d(
 }
 
 
+ALWAYS_INLINE
 void _plan(
     fft_type *__restrict__ V,
     size_t N,
@@ -120,7 +130,7 @@ void _plan(
 #define params n, M, rowsize, W, (step_i << 1), step_j, use_threads
     _plan(&Y(0, 0, 0), params);
     _plan(&Y(1, 0, 0), params);
-    
+
     forn (i, n) {
       forn (j, M) {
         auto y00 = Y(0, i, j);
@@ -135,7 +145,7 @@ void _plan(
 #define params N, m, rowsize, W, step_i, (step_j << 1), use_threads
     _plan(&X(0, 0, 0), params);
     _plan(&X(1, 0, 0), params);
-    
+
     forn (i, N) {
       forn (j, m) {
         auto x00 = X(0, i, j);
@@ -147,34 +157,43 @@ void _plan(
   }
 }
 
+ALWAYS_INLINE
 void fft2d(fft_type *V, int N, int M, int use_threads, int inverse) {
 #if defined(CXX_MEASURE_TIME)
   struct timespec start, end;
   clock_gettime(CLOCK_MONOTONIC, &start);
 #endif
-  assert(__builtin_popcount(N) == 1 && "dim[0] has to be a power of 2");
-  assert(__builtin_popcount(M) == 1 && "dim[1] has to be a power of 2");
+  // assert(__builtin_popcount(N) == 1 && "dim[0] has to be a power of 2");
+  // assert(__builtin_popcount(M) == 1 && "dim[1] has to be a power of 2");
 
   // Welcome to shitty code : )
   auto revbits = [](size_t *v, size_t n) {
     int lg_n = log2(n);
-    forn(i, n) {
-      int revi = 0;
-      forn(l, lg_n) revi |= ((i >> l) & 1) << (lg_n - l - 1);
-      v[i] = revi;
-    }
+    std::memset(v, 0, n * sizeof(size_t));
+    forn(i, n)
+      forn(l, lg_n)
+        v[i] |= ((i >> l) & 1) << (lg_n - l - 1);
   };
 
   size_t *rev_n = new size_t[N], *rev_m = new size_t[M];
-  revbits(rev_n, N), revbits(rev_m, M);  
+  revbits(rev_n, N), revbits(rev_m, M);
 
   forn(i, N) {
     int rev_i = rev_n[i];
-    forn(j, M) {
-      if ((i < rev_i) || ((i == rev_i) && (j < rev_m[j])))
-        std::swap(V[i * M + j], V[rev_i * M + rev_m[j]]);
+    if (i < rev_i)
+      forn(j, M)
+        std::swap(V[i * M + j], V[rev_i * M + j]); // N * M / L
+  }
+
+
+  forn(i, N) {
+    forn (j, M) {
+      int rev_j = rev_m[j];
+      if (j < rev_j)
+        std::swap(V[i * M + j], V[i * M + rev_j]); // Can be N * M / L from
     }
   }
+
 
   int mxdim = std::max(N, M);
   const int lg_dim = log2(mxdim);
@@ -207,7 +226,7 @@ int main(int argc, char **argv) {
   using namespace std;
   int use_threads = 1;
   const uint32_t N = stoi(string(argv[1]));
-  assert(__builtin_popcount(N) == 1);
+  // assert(__builtin_popcount(N) == 1);
   auto matrix = new fft::fft_type[N * N];
   fft::fft2d(matrix, N, N, use_threads, 0);
 }
